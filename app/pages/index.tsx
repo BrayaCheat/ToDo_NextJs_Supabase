@@ -54,22 +54,31 @@ const HomePage = () => {
   const handleRealTimeEvent = (payload: Payload) => {
     if (!payload) return;
     const { eventType } = payload;
-    console.log(data)
+    const newTask = payload.new;
+    const oldTask = payload.old;
     switch(eventType) {
       case "INSERT":
-          const newTask = payload.new;
-          const oldTask = data.find(d => d.id == newTask.id);
-          if (!oldTask) {
-            setData(prevItems => {
-              const updatedItems = [newTask, ...prevItems];
-              dataRef.current = updatedItems;
-              return updatedItems;
-            });
-          }
+          setData(prevItems => {
+            const updatedItems = [newTask, ...prevItems];
+            dataRef.current = updatedItems;
+            return updatedItems;
+          });
           break;
       case "UPDATE":
+        setData(prevItems => {
+          const updatedItems = prevItems.map(task => 
+            task.id === newTask.id ? newTask : task
+          );
+          dataRef.current = updatedItems;
+          return updatedItems;
+        });
         break;
       case "DELETE":
+        setData(prevItems => {
+          const updatedItems = prevItems.filter(task => task.id !== oldTask.id);
+          dataRef.current = updatedItems;
+          return updatedItems;
+        });
         break;
       default: 
           console.log("Does not support this event type " + eventType);
