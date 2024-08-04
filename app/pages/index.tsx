@@ -1,12 +1,22 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import { todo_item } from "../types/todo_item";
+import React, { useEffect, useState, useRef } from "react";
+import { todo_item } from '../types/todo_item';
 import Card from "../components/my_card";
 import { Input } from "@nextui-org/react";
 import { toast } from "react-toastify";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import supabase from "../config/supabaseClient";
+
+interface Payload {
+  eventType: string
+  new: todo_item
+  commit_timestamp: string
+  errors: string[]
+  old: todo_item
+  schema: string
+  table: string
+}
 
 const HomePage = () => {
   const [data, setData] = useState<todo_item[]>([]);
@@ -15,6 +25,11 @@ const HomePage = () => {
   const [notFoundMessage, setNotFoundMessage] = useState<string>(
     "No result. Create a new one instead!"
   );
+  const dataRef = useRef(data);
+
+  useEffect(() => {
+    dataRef.current = data;
+  }, [data]);
 
   useEffect(() => {
     fetchData();
@@ -30,16 +45,44 @@ const HomePage = () => {
         },
         (payload: any) => {
           console.log(payload);
+          handleRealTimeEvent(payload);
         }
       )
       .subscribe();
   }, []);
+
+  const handleRealTimeEvent = (payload: Payload) => {
+    if (!payload) return;
+    const { eventType } = payload;
+    console.log(data)
+    switch(eventType) {
+      case "INSERT":
+          const newTask = payload.new;
+          const oldTask = data.find(d => d.id == newTask.id);
+          if (!oldTask) {
+            setData(prevItems => {
+              const updatedItems = [newTask, ...prevItems];
+              dataRef.current = updatedItems;
+              return updatedItems;
+            });
+          }
+          break;
+      case "UPDATE":
+        break;
+      case "DELETE":
+        break;
+      default: 
+          console.log("Does not support this event type " + eventType);
+
+    }
+  }
 
   const fetchData = async () => {
     try {
       const res = await fetch("/api/todo");
       const tasks = await res.json();
       setData(tasks.data);
+      console.log(data)
     } catch (error) {
       console.error("Unexpected error", error);
     }
@@ -68,7 +111,6 @@ const HomePage = () => {
       }
       toast.success(`${RESPONSE_MESSAGE.message}`);
       setInput("");
-      fetchData();
     } catch (error) {
       toast.error("Unexpected error occurred");
       console.error("Unexpected error", error);
@@ -79,9 +121,9 @@ const HomePage = () => {
     fetchData(); // Refetch data after an action is completed
   };
 
-  const filteredData = data.filter((item) =>
-    query.toLowerCase() === "" ? item : item.todo.toLowerCase().includes(query)
-  );
+  // const filteredData = data.filter((item) =>
+  //   query.toLowerCase() === "" ? item : item.todo.toLowerCase().includes(query)
+  // );
 
   return (
     <main className="md:w-[900px] w-full md:p-10 p-3 m-auto h-[900px] overflow-auto  border rounded-md shadow-sm bg-white flex flex-col gap-9 relative">
@@ -122,7 +164,7 @@ const HomePage = () => {
 
       {/* card_component */}
       <div className="overflow-y-scroll">
-        {!filteredData.length ? (
+        {!data.length ? (
           <p className="text-center text-gray-500">
             {query.toLowerCase() === ""
               ? "No todo found"
@@ -130,7 +172,7 @@ const HomePage = () => {
           </p>
         ) : (
           <div className="flex flex-col gap-9">
-            {filteredData.map((item) => (
+            {data.map((item) => (
               <Card
                 key={item.id}
                 item={item}
