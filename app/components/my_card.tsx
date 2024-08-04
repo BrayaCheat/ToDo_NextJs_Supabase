@@ -140,9 +140,9 @@ const MyCard: React.FC<CardItem> = ({ item, onActionCompleted }) => {
     <Card className="py-4 shadow-sm border rounded-md">
       <CardHeader className="pb-0 pt-2 px-4 flex-col items-start">
         <div className="flex items-center justify-between w-full">
-          <h4 className="font-bold text-md w-[300px]">{item.todo}</h4>
+          <h4 className="font-bold md:text-md text-sm md:w-[300px]">{item.todo}</h4>
           <p
-            className={`text-sm font-semibold w-[100px] ${
+            className={`text-sm font-semibold md:w-[100px] ${
               item.isCompleted ? "text-green-600" : "text-amber-400"
             }`}
           >
