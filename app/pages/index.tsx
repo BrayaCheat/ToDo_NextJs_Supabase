@@ -6,6 +6,7 @@ import Card from "../components/my_card";
 import { Input } from "@nextui-org/react";
 import { toast } from "react-toastify";
 import { Icon } from "@iconify/react/dist/iconify.js";
+import supabase from "../config/supabaseClient";
 
 const HomePage = () => {
   const [data, setData] = useState<todo_item[]>([]);
@@ -17,6 +18,21 @@ const HomePage = () => {
 
   useEffect(() => {
     fetchData();
+
+    supabase
+      .channel("realTimeTask")
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "ToDoList",
+        },
+        (payload: any) => {
+          console.log(payload);
+        }
+      )
+      .subscribe();
   }, []);
 
   const fetchData = async () => {
