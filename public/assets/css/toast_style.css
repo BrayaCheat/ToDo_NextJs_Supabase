@@ -1,0 +1,24 @@
+/* toastStyles.css */
+.Toastify__toast {
+    font-size: 14px; /* Adjust the font size */
+    padding: 8px 16px; /* Adjust the padding */
+    border-radius: 8px; /* Adjust the border radius */
+    max-width: 300px; /* Adjust the maximum width */
+  }
+  
+  .Toastify__toast--success {
+    background-color: #4caf50; /* Customize success background color */
+  }
+  
+  .Toastify__toast--error {
+    background-color: #f44336; /* Customize error background color */
+  }
+  
+  .Toastify__toast--info {
+    background-color: #2196f3; /* Customize info background color */
+  }
+  
+  .Toastify__toast--warning {
+    background-color: #ff9800; /* Customize warning background color */
+  }
+  
