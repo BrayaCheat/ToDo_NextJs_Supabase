@@ -35,11 +35,9 @@ export async function POST(request: Request) {
       );
     }
 
-    const { error } = await supabase
-      .from("ToDoList")
-      .insert({
-        todo: todo,
-        isCompleted: false,
+    const { error } = await supabase.from("ToDoList").insert({
+      todo: todo,
+      isCompleted: false,
     });
 
     if (error) {

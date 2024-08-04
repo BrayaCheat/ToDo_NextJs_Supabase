@@ -43,7 +43,7 @@ const MyCard: React.FC<CardItem> = ({ item, onActionCompleted }) => {
     { key: "delete", label: "Delete" },
   ];
 
-  const [ERROR_MESSAGE, SET_ERROR_MESSAGE] = useState<string>("Id is missing!");
+  const ERROR_MESSAGE = "Id is missing!";
 
   const handleOpenUpdateModal = (item: Item) => {
     setSelectedItem(item);
@@ -65,7 +65,7 @@ const MyCard: React.FC<CardItem> = ({ item, onActionCompleted }) => {
             isCompleted: selectedItem?.isCompleted,
           }),
         });
-        const MEESAGE = await res.json()
+        const MEESAGE = await res.json();
         toast.success(`${MEESAGE.message}`);
         setIsUpdateModalOpen(false);
         onActionCompleted();
@@ -83,7 +83,7 @@ const MyCard: React.FC<CardItem> = ({ item, onActionCompleted }) => {
         const res = await fetch(`/api/todo/${selectedItem.id}`, {
           method: "DELETE",
         });
-        const MESSAGE = await res.json()
+        const MESSAGE = await res.json();
         toast.error(`${MESSAGE.message}`);
         setIsDeleteModalOpen(false);
         onActionCompleted();
@@ -140,7 +140,9 @@ const MyCard: React.FC<CardItem> = ({ item, onActionCompleted }) => {
     <Card className="py-4 shadow-sm border rounded-md">
       <CardHeader className="pb-0 pt-2 px-4 flex-col items-start">
         <div className="flex items-center justify-between w-full">
-          <h4 className="font-bold md:text-md text-sm md:w-[300px]">{item.todo}</h4>
+          <h4 className="font-bold md:text-md text-sm md:w-[300px]">
+            {item.todo}
+          </h4>
           <p
             className={`text-sm font-semibold md:w-[100px] ${
               item.isCompleted ? "text-green-600" : "text-amber-400"
