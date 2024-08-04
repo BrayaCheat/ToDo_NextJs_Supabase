@@ -72,16 +72,17 @@ const HomePage = () => {
       {/* title */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <h1 className="text-xl">To Do List -</h1>
+          <h1 className="md:text-xl text-sm">To Do List -</h1>
           <a
-            className="underline text-xl"
+            className="underline md:text-xl text-sm"
             href="https://braya-cheat.vercel.app/"
+            target="_blank"
           >
             Braya Cheat
           </a>
         </div>
 
-        <div className="w-[300px]">
+        <div className="md:w-[300px] w-full">
           <Input
             placeholder="Search for task..."
             startContent={
