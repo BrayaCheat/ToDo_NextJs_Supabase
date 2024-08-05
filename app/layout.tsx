@@ -17,9 +17,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <Head>
-        <link rel="icon" href="/icons/icons8-nextjs-windows-11-color-120.png" />
-      </Head>
+      <head>
+        <link
+          rel="icon"
+          href="/icons/icons8-nextjs-windows-11-color-120.png"
+          type="image/<generated>"
+        />
+      </head>
       <body className={inter.className}>{children}</body>
     </html>
   );
