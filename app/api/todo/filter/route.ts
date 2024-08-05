@@ -12,14 +12,21 @@ export async function GET(request: Request) {
       .ilike("todo", `%${query}%`);
 
     if (error) {
-      throw new Error("Fail with supabase");
-      return;
+      return NextResponse.json(
+        {
+          message: "Failed with supabase",
+        },
+        { status: 500 }
+      );
     }
 
     if (!data.length) {
-      return NextResponse.json({
-        message: "Not found",
-      });
+      return NextResponse.json(
+        {
+          message: "Task not found",
+        },
+        { status: 404 }
+      );
     }
     return NextResponse.json({
       data: data,
