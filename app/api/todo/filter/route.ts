@@ -41,6 +41,8 @@ export async function GET(request: Request) {
       );
     }
   } catch (error) {
-    throw new Error("Fail to filter task");
+    return NextResponse.json({
+      message: "Fail to filter the task"
+    }, {status: 404})
   }
 }
