@@ -7,7 +7,7 @@ import { Input } from "@nextui-org/react";
 import { toast } from "react-toastify";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import supabase from "../config/supabaseClient";
-import { debounce, filter } from "lodash";
+import { debounce } from "lodash";
 
 interface Payload {
   eventType: string;
@@ -135,7 +135,7 @@ const HomePage = () => {
   const filterTask = useCallback(
     debounce(async (searchQuery: string) => {
       setLoading(true);
-      const res = await fetch(`/api/todo/filter?query=${searchQuery}`);
+      const res = await fetch(`/api/filter?query=${searchQuery}`);
       const taskData = await res.json();
       setData(taskData.data || []);
       setLoading(false);
@@ -188,7 +188,7 @@ const HomePage = () => {
       <div className="overflow-y-scroll">
         {!data.length ? (
           <p className="text-center text-gray-500">
-            {loading ? "loading..." : "No result. Create a new one instead!"}
+            {loading ? "loading..." : notFoundMessage}
           </p>
         ) : (
           <div className="flex flex-col gap-9">
