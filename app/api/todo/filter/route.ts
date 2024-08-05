@@ -4,7 +4,7 @@ import { NextResponse } from "next/server";
 export async function GET(request: Request) {
   try {
     const url = new URL(request.url);
-    const query = url.searchParams.get("query") || "";
+    const query = url.searchParams.get("query");
 
     const { data, error } = await supabase
       .from("ToDoList")

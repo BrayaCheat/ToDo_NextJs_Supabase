@@ -7,7 +7,7 @@ import { Input } from "@nextui-org/react";
 import { toast } from "react-toastify";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import supabase from "../config/supabaseClient";
-import { debounce } from "lodash";
+import { debounce, filter } from "lodash";
 
 interface Payload {
   eventType: string;
@@ -132,20 +132,19 @@ const HomePage = () => {
     fetchData(); // Refetch data after an action is completed
   };
 
-  const filterTask = debounce(async (searchQuery: string) => {
-    setLoading(true);
-    const res = await fetch(`/api/todo/filter?query=${searchQuery}`);
-    const taskData = await res.json();
-    setData(taskData.data);
-    setLoading(false);
-  }, 300);
+  const filterTask = useCallback(
+    debounce(async (searchQuery: string) => {
+      setLoading(true);
+      const res = await fetch(`/api/todo/filter?query=${searchQuery}`);
+      const taskData = await res.json();
+      setData(taskData.data || []);
+      setLoading(false);
+    }, 500),
+    []
+  );
 
   useEffect(() => {
-    if (query) {
-      filterTask(query);
-      return;
-    }
-    fetchData();
+    filterTask(query);
   }, [query]);
 
   return (
