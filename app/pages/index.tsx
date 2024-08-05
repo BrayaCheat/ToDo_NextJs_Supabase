@@ -135,7 +135,7 @@ const HomePage = () => {
   const filterTask = useCallback(
     debounce(async (searchQuery: string) => {
       setLoading(true);
-      const res = await fetch(`/api/filter?query=${searchQuery}`);
+      const res = await fetch(`/api/todo/filter?query=${searchQuery}`);
       const taskData = await res.json();
       setData(taskData.data || []);
       setLoading(false);
