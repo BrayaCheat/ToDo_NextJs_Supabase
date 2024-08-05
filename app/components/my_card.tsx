@@ -95,7 +95,7 @@ const MyCard: React.FC<CardItem> = ({ item, onActionCompleted }) => {
     }
   };
 
-  const handleMarkAsDone = async (id: number, isCompleted: any) => {
+  const handleMarkAsDone = async (id: number, isCompleted: boolean) => {
     if (id != null) {
       try {
         const res = await fetch(`/api/todo/${id}`, {

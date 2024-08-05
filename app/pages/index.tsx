@@ -1,27 +1,29 @@
 "use client";
 
-import React, { useEffect, useState, useRef } from "react";
-import { todo_item } from '../types/todo_item';
+import React, { useEffect, useState, useRef, useCallback } from "react";
+import { todo_item } from "../types/todo_item";
 import Card from "../components/my_card";
 import { Input } from "@nextui-org/react";
 import { toast } from "react-toastify";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import supabase from "../config/supabaseClient";
+import { debounce } from "lodash";
 
 interface Payload {
-  eventType: string
-  new: todo_item
-  commit_timestamp: string
-  errors: string[]
-  old: todo_item
-  schema: string
-  table: string
+  eventType: string;
+  new: todo_item;
+  commit_timestamp: string;
+  errors: string[];
+  old: todo_item;
+  schema: string;
+  table: string;
 }
 
 const HomePage = () => {
   const [data, setData] = useState<todo_item[]>([]);
   const [input, setInput] = useState<string>("");
   const [query, setQuery] = useState<string>("");
+  const [loading, setLoading] = useState(false);
   const [notFoundMessage, setNotFoundMessage] = useState<string>(
     "No result. Create a new one instead!"
   );
@@ -56,17 +58,17 @@ const HomePage = () => {
     const { eventType } = payload;
     const newTask = payload.new;
     const oldTask = payload.old;
-    switch(eventType) {
+    switch (eventType) {
       case "INSERT":
-          setData(prevItems => {
-            const updatedItems = [newTask, ...prevItems];
-            dataRef.current = updatedItems;
-            return updatedItems;
-          });
-          break;
+        setData((prevItems) => {
+          const updatedItems = [newTask, ...prevItems];
+          dataRef.current = updatedItems;
+          return updatedItems;
+        });
+        break;
       case "UPDATE":
-        setData(prevItems => {
-          const updatedItems = prevItems.map(task => 
+        setData((prevItems) => {
+          const updatedItems = prevItems.map((task) =>
             task.id === newTask.id ? newTask : task
           );
           dataRef.current = updatedItems;
@@ -74,24 +76,24 @@ const HomePage = () => {
         });
         break;
       case "DELETE":
-        setData(prevItems => {
-          const updatedItems = prevItems.filter(task => task.id !== oldTask.id);
+        setData((prevItems) => {
+          const updatedItems = prevItems.filter(
+            (task) => task.id !== oldTask.id
+          );
           dataRef.current = updatedItems;
           return updatedItems;
         });
         break;
-      default: 
-          console.log("Does not support this event type " + eventType);
-
+      default:
+        console.log("Does not support this event type " + eventType);
     }
-  }
+  };
 
   const fetchData = async () => {
     try {
       const res = await fetch("/api/todo");
       const tasks = await res.json();
       setData(tasks.data);
-      console.log(data)
     } catch (error) {
       console.error("Unexpected error", error);
     }
@@ -130,9 +132,21 @@ const HomePage = () => {
     fetchData(); // Refetch data after an action is completed
   };
 
-  // const filteredData = data.filter((item) =>
-  //   query.toLowerCase() === "" ? item : item.todo.toLowerCase().includes(query)
-  // );
+  const filterTask = debounce(async (searchQuery: string) => {
+    setLoading(true);
+    const res = await fetch(`/api/todo/filter?query=${searchQuery}`);
+    const taskData = await res.json();
+    setData(taskData.data);
+    setLoading(false);
+  }, 300);
+
+  useEffect(() => {
+    if (query) {
+      filterTask(query);
+      return;
+    }
+    fetchData();
+  }, [query]);
 
   return (
     <main className="md:w-[900px] w-full md:p-10 p-3 m-auto h-[900px] overflow-auto  border rounded-md shadow-sm bg-white flex flex-col gap-9 relative">
@@ -175,9 +189,7 @@ const HomePage = () => {
       <div className="overflow-y-scroll">
         {!data.length ? (
           <p className="text-center text-gray-500">
-            {query.toLowerCase() === ""
-              ? "No todo found"
-              : "No result. Create a new one instead!"}
+            {loading ? "loading..." : "No result. Create a new one instead!"}
           </p>
         ) : (
           <div className="flex flex-col gap-9">
