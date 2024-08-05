@@ -32,9 +32,6 @@ export async function GET(request: Request) {
       data: data,
     });
   } catch (error) {
-    return NextResponse.json(
-      { message: "Failed to filter tasks" },
-      { status: 500 }
-    );
+    throw new Error("Fail to filter task")
   }
 }
