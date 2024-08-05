@@ -36,7 +36,7 @@ const MyCard: React.FC<CardItem> = ({ item, onActionCompleted }) => {
     {
       key: "mark_done",
       label: `${
-        selectedItem.isCompleted ? "Mark as incomplete" : "Mark as complete"
+        item.isCompleted ? "Mark as incomplete" : "Mark as complete"
       } `,
     },
     { key: "update", label: "Update" },
